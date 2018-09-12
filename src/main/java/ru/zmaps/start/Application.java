@@ -6,8 +6,8 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.ComponentScan;
 
-@ComponentScan(basePackages = {"ru.zmaps"})
 @SpringBootApplication
+@ComponentScan(basePackages = {"ru.zmaps"})
 public class Application extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
