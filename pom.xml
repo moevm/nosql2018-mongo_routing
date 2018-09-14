@@ -28,6 +28,14 @@
 
     <dependencies>
 
+        <!-- For parsing maps-->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <version>LATEST</version>
+        </dependency>
+
+        <!-- Junit for testing -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
