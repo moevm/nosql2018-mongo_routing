@@ -8,14 +8,13 @@ import java.io.IOException;
 
 public class TestParser {
     @Test
-    public void testOpen() throws IOException {
+    public void testOpen() throws Exception {
         FileInputStream in = new FileInputStream("file-to-parse");
         BZip2CompressorInputStream bzIn = new BZip2CompressorInputStream(in);
-        final byte[] buffer = new byte[4096];
-        int n = 0;
-        while (-1 != (n = bzIn.read(buffer))) {
-            System.out.println(new String(buffer));
-        }
+
+        ReaderXmlFile reader = new ReaderXmlFile();
+
+        reader.read(bzIn);
     }
 
 }

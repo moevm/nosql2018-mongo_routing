@@ -8,7 +8,10 @@ import org.xml.sax.helpers.DefaultHandler;
 public class XmlHandler extends DefaultHandler {
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-        super.startElement(uri, localName, qName, attributes);
+        System.out.println("uri " + uri + "\n" +
+                "localName " + localName + "\n" +
+                "qName " + qName + "\n" +
+                "attributes " + attributes);
     }
 
     @Override
