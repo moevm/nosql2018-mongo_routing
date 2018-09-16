@@ -5,9 +5,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class Node extends HasId{
-    double lat;
-    double lon;
+public class Node extends Element {
+    private double lat;
+    private double lon;
+
+    public Node(double lat, double lon, long id) {
+        super(id);
+
+        this.lat = lat;
+        this.lon = lon;
+    }
 }

@@ -1,40 +1,65 @@
 package ru.zmaps.parser;
 
-import org.springframework.stereotype.Component;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+import ru.zmaps.parser.entity.Node;
 
-import java.util.Arrays;
+import ru.zmaps.parser.entity.Element;
+import ru.zmaps.parser.entity.Tag;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 public class XmlHandler extends DefaultHandler {
-    private String attrToString(Attributes attributes) {
-        for (int i = 0; i < attributes.getLength(); i++) {
-            System.out.println(attributes.getLocalName(i) + " - " + attributes.getValue(i));
-        }
-        return "";
+
+    private Set<String> skipTag = new HashSet<>();
+
+    private HashMap<Long, Node> nodes = new HashMap<>();
+
+    private Element lastElem = null;
+
+    {
+        skipTag.add("created_by");
     }
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-        System.out.println("Start elem");
-        System.out.println("uri " + uri + "\n" +
-                "localName " + localName + "\n" +
-                "qName " + qName + "\n" +
-                "attributes " + attrToString(attributes));
+        parseElem(uri, localName, qName, attributes);
     }
 
-    @Override
-    public void characters(char[] ch, int start, int length) throws SAXException {
-        System.out.println("Characters:");
-        System.out.println("ch " + new String(Arrays.copyOfRange(ch, start, start + length)) + "\n");
-    }
+    private void parseElem(String uri, String localName, String qName, Attributes attributes) {
+        if ("node".equals(qName)) {
+            Long id = Long.valueOf(attributes.getValue("id"));
+            Double lon = Double.valueOf(attributes.getValue("lon"));
+            Double lat = Double.valueOf(attributes.getValue("lat"));
 
-    @Override
-    public void endElement(String uri, String localName, String qName) throws SAXException {
-        System.out.println("End elem");
-        System.out.println("uri " + uri + "\n" +
-                "localName " + localName + "\n" +
-                "qName " + qName + "\n");
+            Node node = new Node(lat, lon, id);
+            lastElem = node;
+
+            nodes.put(id, node);
+            return;
+        }
+
+        if ("tag".equals(qName)) {
+            String key = attributes.getValue("k");
+
+            if (skipTag.contains(key)) {
+                return;
+            }
+
+            String val = attributes.getValue("v");
+
+            lastElem.addTag(new Tag(key, val));
+            return;
+        }
+
+        if ("way".equals(qName)) {
+            System.out.println("its way");
+            System.out.println("its way");
+            System.out.println("its way");
+            System.out.println("its way");
+        }
     }
 }
