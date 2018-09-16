@@ -9,7 +9,7 @@ import java.io.IOException;
 public class TestParser {
     @Test
     public void testOpen() throws Exception {
-        FileInputStream in = new FileInputStream("file-to-parse");
+        FileInputStream in = new FileInputStream("C:\\Users\\niksh\\Desktop\\australia-oceania-latest.osm.bz2");
         BZip2CompressorInputStream bzIn = new BZip2CompressorInputStream(in);
 
         ReaderXmlFile reader = new ReaderXmlFile();
