@@ -1,8 +1,6 @@
 package ru.zmaps.parser.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 public class Node extends Element {
@@ -14,5 +12,10 @@ public class Node extends Element {
 
         this.lat = lat;
         this.lon = lon;
+    }
+
+    @Override
+    public String toString() {
+        return "Node{" + "lat=" + lat + ", lon=" + lon + ", id=" + id + ", tags=" + tags + '}';
     }
 }

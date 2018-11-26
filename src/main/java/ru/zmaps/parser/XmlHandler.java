@@ -1,65 +1,60 @@
 package ru.zmaps.parser;
 
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.log4j.Log4j;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-import ru.zmaps.parser.entity.Node;
-
+import ru.zmaps.db.DbUtils;
 import ru.zmaps.parser.entity.Element;
+import ru.zmaps.parser.entity.Node;
 import ru.zmaps.parser.entity.Tag;
+import ru.zmaps.parser.entity.Way;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-
+@Log4j
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class XmlHandler extends DefaultHandler {
-
-    private Set<String> skipTag = new HashSet<>();
-
-    private HashMap<Long, Node> nodes = new HashMap<>();
 
     private Element lastElem = null;
 
-    {
-        skipTag.add("created_by");
-    }
+    private final DbUtils db = DbUtils.getInstance();
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         parseElem(uri, localName, qName, attributes);
     }
 
+    @Override
+    public void endElement(String uri, String localName, String qName) throws SAXException {
+        if ("node".equals(qName)) {
+            db.addNode((Node) lastElem);
+        }
+    }
+
     private void parseElem(String uri, String localName, String qName, Attributes attributes) {
         if ("node".equals(qName)) {
-            Long id = Long.valueOf(attributes.getValue("id"));
-            Double lon = Double.valueOf(attributes.getValue("lon"));
-            Double lat = Double.valueOf(attributes.getValue("lat"));
+            long id = Long.parseLong(attributes.getValue("id"));
+            double lon = Double.parseDouble(attributes.getValue("lon"));
+            double lat = Double.parseDouble(attributes.getValue("lat"));
 
-            Node node = new Node(lat, lon, id);
-            lastElem = node;
+            lastElem = new Node(lat, lon, id);
 
-            nodes.put(id, node);
             return;
         }
 
         if ("tag".equals(qName)) {
             String key = attributes.getValue("k");
-
-            if (skipTag.contains(key)) {
-                return;
-            }
-
             String val = attributes.getValue("v");
 
             lastElem.addTag(new Tag(key, val));
+
             return;
         }
 
         if ("way".equals(qName)) {
-            System.out.println("its way");
-            System.out.println("its way");
-            System.out.println("its way");
-            System.out.println("its way");
+            long id = Long.parseLong(attributes.getValue("id"));
+            lastElem = new Way(id);
         }
     }
 }
