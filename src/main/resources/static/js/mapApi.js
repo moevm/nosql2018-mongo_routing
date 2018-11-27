@@ -1,7 +1,3 @@
-function f() {
-
-}
-
 
 function getTileNum(lat, lon, zoom) {
     return [lat2tile(lat, zoom), long2tile(lon, zoom)]
