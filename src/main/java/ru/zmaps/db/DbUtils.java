@@ -31,7 +31,7 @@ import java.util.function.Consumer;
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class DbUtils {
 
-    MongoClient mongoClient = new MongoClient(new ServerAddress("212.8.247.116", 27017));
+    MongoClient mongoClient = new MongoClient(new ServerAddress("localhost", 27017));
 
     MongoDatabase db = mongoClient.getDatabase("test");
 
