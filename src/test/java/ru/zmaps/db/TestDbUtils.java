@@ -9,7 +9,7 @@ public class TestDbUtils {
 
     @Test
     public void testGetNear() {
-        Node nearest = db.getNearest(15.0, 15.0);
+        Node nearest = db.getNearestPoint(15.0, 15.0);
         Assert.assertNotNull(nearest);
     }
 }

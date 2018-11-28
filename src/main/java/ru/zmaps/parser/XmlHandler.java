@@ -29,6 +29,11 @@ public class XmlHandler extends DefaultHandler {
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if ("node".equals(qName)) {
             db.addNode((Node) lastElem);
+            return;
+        }
+
+        if ("way".equals(qName)) {
+            db.addWay((Way) lastElem);
         }
     }
 
@@ -50,6 +55,10 @@ public class XmlHandler extends DefaultHandler {
             lastElem.addTag(new Tag(key, val));
 
             return;
+        }
+
+        if ("nd".equals(qName)) {
+            ((Way) lastElem).addNode(db.getNodeById(Long.valueOf(attributes.getValue("ref"))));
         }
 
         if ("way".equals(qName)) {
