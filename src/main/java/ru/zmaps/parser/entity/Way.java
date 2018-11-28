@@ -3,6 +3,7 @@ package ru.zmaps.parser.entity;
 
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -11,5 +12,9 @@ public class Way extends Element {
         super(id);
     }
 
-    List<Node> nodes;
+    final List<Node> nodes = new ArrayList<>();
+
+    public void addNode(Node node) {
+        nodes.add(node);
+    }
 }

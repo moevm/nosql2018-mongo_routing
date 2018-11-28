@@ -6,14 +6,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.zmaps.services.PointService;
-
-import java.util.Arrays;
+import ru.zmaps.services.WayService;
 
 @RestController
-@RequestMapping("/api/point")
-public class PointController {
+@RequestMapping("/api/way")
+public class WayController {
 
-    private final PointService service = new PointService();
+    private final WayService service = new WayService();
 
     private final Gson gson = new Gson();
 
