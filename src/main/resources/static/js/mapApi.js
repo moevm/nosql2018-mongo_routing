@@ -10,20 +10,6 @@ function lat2tile(lat, zoom) {
     return (Math.floor((1 - Math.log(Math.tan(lat * Math.PI / 180) + 1 / Math.cos(lat * Math.PI / 180)) / Math.PI) / 2 * Math.pow(2, zoom)));
 }
 
-
-function disablecontext(e) {
-
-    var clickedEl = (e == null) ? event.srcElement.tagName : e.target.tagName;
-
-    if (clickedEl == "IMG") {
-        alert(errorMsg);
-        return false;
-    }
-}
-
-var errorMsg = "Вы не можете сохранять изображения с этого сайта.";
-
-
 var map = L.map('map', {
     contextmenu: true,
     contextmenuWidth: 140,
@@ -94,14 +80,18 @@ function drawPolygon(coordinates, color, weight, opacity, smooth) {
 
 drawPolygon([[59.969732, 30.301888], [59.967111, 30.309849], [59.964157, 30.308540], [59.959576, 30.301448]], 'blue', 5, 0.5, 1);
 
-var OpenStreetMap_Mapnik = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-});
+var osmUrl1 = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png';
+var osmUrl2 = 'http://c.tiles.wmflabs.org/hillshading/{z}/{x}/{y}.png';
+var osmUrl3 = 'http://www.openptmap.org/tiles/{z}/{x}/{y}.png';
+/* Base Maps */
+var grayscale = L.tileLayer(osmUrl1, {id: 'MapID', attribution: '1'});
+var streets = L.tileLayer(osmUrl2, {id: 'MapID', attribution: '2'});
+var metro = L.tileLayer(osmUrl3, {id: 'MapID', attribution: '3'});
 
-var Wikimedia = L.tileLayer('https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}{r}.png', {
-    attribution: '<a href="https://wikimediafoundation.org/wiki/Maps_Terms_of_Use">Wikimedia</a>',
-    minZoom: 1,
-    maxZoom: 19
-});
+var mixed = {
+    "Grayscale": grayscale, // BaseMaps
+    "Streets": streets, 		// BaseMaps
+    "Metro": metro 				// BaseMaps
+};
 
+L.control.layers(null, mixed).addTo(map);

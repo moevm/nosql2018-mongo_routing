@@ -11,48 +11,8 @@
 <body>
 
 <div id="map"></div>
-<div>
-    <form method="POST" action="" id="form_who_should_be_checked">
-    <input name="anything" value="">
-    <input type="submit">
-</form>
-    <script>
-        document.getElementById("form_who_should_be_checked").onsubmit=
-            function() {
-                alert(this.anything.value);
-                return false;
-            }
-    </script></div>
-
-<div class="leaflet-top leaflet-right">
-    <div class="leaflet-control-layers leaflet-control leaflet-control-layers-expanded" aria-haspopup="true"><a
-            class="leaflet-control-layers-toggle" href="#" title="Layers"></a>
-        <form class="leaflet-control-layers-list">
-            <div class="leaflet-control-layers-base"><label>
-                <input type="radio" class="leaflet-control-layers-selector"
-                       name="leaflet-base-layers" checked="checked">
-                <span> MapSurfer.net</span>
-            </label>
-                <label>
-                    <input type="radio" class="leaflet-control-layers-selector" name="leaflet-base-layers" onclick="OpenStreetMap_Mapnik()">
-                    <span> Mapnik</span></label>
-                <label>
-                    <input type="radio" class="leaflet-control-layers-selector" name="leaflet-base-layers" onclick="Wikimedia()">
-                    <span> Wikimedia</span></label>
-                <label>
-                    <input type="radio" class="leaflet-control-layers-selector" name="leaflet-base-layers">
-                    <span> Велокарта</span></label>
-                <label>
-                    <input type="radio" class="leaflet-control-layers-selector" name="leaflet-base-layers">
-                    <span> Humanitarian</span></label>
-
-            </div>
-        </form>
-    </div>
-</div>
-
 </body>
 
-<script src="js/mapApi.js" type="text/javascript">
-</script>
+<script src="js/mapApi.js" type="text/javascript"></script>
+
 </html>
