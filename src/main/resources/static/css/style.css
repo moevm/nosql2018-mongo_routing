@@ -10,3 +10,50 @@
     height: 100%;
     background: rgba(255, 255, 255, 0.5);
 }
+#pan {
+    top: 2em;
+    position: absolute;
+    z-index :2;
+}
+.d1 input {
+ height: 42px;
+ width: 300px;
+  padding-left: 10px;
+  border: 2px solid #7BA7AB;
+  border-radius: 5px;
+  outline: none;
+  background: #F9F0DA;
+  color: #9E9C9C;
+}
+.d1 button {
+  height: 26px;
+  width: 26px;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #7BA7AB;
+  cursor: pointer;
+}
+
+
+.ul-addresses {
+    height: 100%;
+    width: 100%;
+    right: 18px;
+    background: #F9F0DA;
+}
+
+.ul-addresses:hover {
+    height: 100%;
+    width: 100%;
+    right: 18px;
+    background: #F9F0DA;
+}
+
+.js-filter-address:hover {
+    height: 100%;
+    width: 100%;
+    right: 18px;
+    background: #F9F0DA;
+    border: 2px solid #7BA7AB;
+}

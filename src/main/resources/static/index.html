@@ -6,11 +6,26 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"/>
     <link rel="stylesheet" href="css/style.css">
     <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
 </head>
 <body>
-
 <div id="map"></div>
+<div id="pan" class="d1">
+    <form id="filter-sidebar" action="#" method="post">
+        <div class="filter-select-wrap">
+            <input id="filter-address" class="filter-select filter-tax" name="location"
+                   data-address='["location_1","alabama","alaska","anchorage","arizona","arkansas","birmingham","california","chandler","colorado","connecticut","denver","florida","georgia","gilbert","glendale","hartford","hawaii","hollywood","honolulu","huntsville","idaho","illinois","indiana","indianapolis","iowa","kansas","kentucky","little-rock","los-angeles","louisiana","louisville","massachusetts","mesa","michigan","minnesota","mobile","montgomery","moreno-valley","naperville","nebraska","nevada","new-hampshire","new-jersey","new-orleans","new-york","newark","ohio","olathe","orlando","palmdale","paterson","pennsylvania","peoria","philadelphia","pittsburgh","reno","rhode-island","rochester","rochester-new-york","rockford","sacramento"]'
+                   type="text" placeholder="All Locations"/>
+            <ul class="ul-addresses"></ul>
+
+
+        </div>
+    </form>
+
+
+</div>
+
 </body>
 
 <script src="js/mapApi.js" type="text/javascript"></script>
