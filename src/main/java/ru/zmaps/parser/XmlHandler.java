@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-import ru.zmaps.db.DbUtils;
 import ru.zmaps.db.NodeDAO;
 import ru.zmaps.db.TipDAO;
 import ru.zmaps.db.WayDAO;

@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.zmaps.db.TipDAO;
-import ru.zmaps.services.SearchService;
 
 @Log4j
 @RestController
@@ -17,7 +16,6 @@ import ru.zmaps.services.SearchService;
 public class TipsController {
     private final Gson gson = new Gson();
 
-    private final SearchService service = new SearchService();
     @Autowired
     TipDAO dao;
 
