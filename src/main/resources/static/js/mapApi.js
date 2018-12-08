@@ -50,7 +50,7 @@ map.on('click', function (e) {
         .setLatLng([e.latlng.lat, e.latlng.lng])
         .setContent("I am a standalone popup.")
         .openOn(map)
-})
+});
 
 function drawLine(coordinates, color, weight, opacity, smooth) {
     let polyline = L.polyline(coordinates,
@@ -120,6 +120,7 @@ function findEl(el, array, value) {
 
 var filterInput = $('#filter-address'),
    filterUl = $('.ul-addresses');
+
 //проверка при каждом вводе символа
 filterInput.bind('input propertychange', function(){
    if($(this).val() !== ''){
@@ -130,6 +131,7 @@ filterInput.bind('input propertychange', function(){
       filterUl.fadeOut(100);
    }
 });
+
 //при клике на елемент выпадалки присваиваем значение в инпут и ставим триггер на его изменение
 filterUl.on('click','.js-filter-address', function(e){
    $('#filter-address').val('');

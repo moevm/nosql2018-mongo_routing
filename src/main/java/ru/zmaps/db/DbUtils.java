@@ -19,6 +19,7 @@ import ru.zmaps.parser.entity.Way;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 
@@ -26,7 +27,7 @@ import java.util.Objects;
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class DbUtils {
 
-    MongoClient mongoClient = new MongoClient(new ServerAddress("212.8.247.116", 27017));
+    MongoClient mongoClient = new MongoClient(new ServerAddress("localhost", 32768));
 
     MongoDatabase db = mongoClient.getDatabase("test");
 
@@ -83,10 +84,20 @@ public class DbUtils {
         return deConvertWay(Objects.requireNonNull(coordinates.first()));
     }
 
+
+    public List<String> getTipsName(String subStr) {
+        MongoCollection<Document> ways = db.getCollection("ways");
+
+        ways.find();
+
+        return null;
+    }
+
+
     private Node deConvertNode(Document p) {
         List<Double> coordinate = (List<Double>) ((Document) p.get("geometry")).get("coordinates");
         Node node = new Node(coordinate.get(0), coordinate.get(1), p.getLong("_id"));
-        node.setTags(deConvertTags((List<Document>) p.get("tags")));
+        node.setTags((Map<String, String>) p.get("tags"));
         return node;
     }
 
@@ -100,12 +111,12 @@ public class DbUtils {
         way.getNodes().forEach(n -> {
             Document document = new Document();
             document.append("_id", n.getId());
-            document.append("geometry", new Point(new Position(n.getLat(), n.getLon())));
+            document.append("geometry", n.getPoint());
 
             points.add(document);
         });
 
-        doc.append("tags", convertTags(way.getTags()));
+        doc.append("tags", way.getTags());
         doc.append("points", points);
         return doc;
     }
@@ -132,8 +143,8 @@ public class DbUtils {
         Document doc = new Document();
 
         doc.append("_id", node.getId());
-        doc.append("geometry", new Point(new Position(node.getLat(), node.getLon())));
-        doc.append("tags", convertTags(node.getTags()));
+        doc.append("geometry", node.getPoint());
+        doc.append("tags", node.getTags());
 
         return doc;
     }
