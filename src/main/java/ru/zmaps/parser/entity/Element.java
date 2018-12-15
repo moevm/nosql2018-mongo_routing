@@ -1,6 +1,7 @@
 package ru.zmaps.parser.entity;
 
 import lombok.Data;
+import org.springframework.data.annotation.Id;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,7 +10,9 @@ import java.util.Map;
 
 @Data
 public class Element {
+    @Id
     long id;
+
     Map<String, String> tags;
 
     public Element(long id) {

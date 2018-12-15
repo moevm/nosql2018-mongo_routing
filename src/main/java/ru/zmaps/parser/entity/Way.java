@@ -2,6 +2,7 @@ package ru.zmaps.parser.entity;
 
 
 import lombok.Data;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,7 @@ public class Way extends Element {
         super(id);
     }
 
+    @DBRef
     final List<Node> nodes = new ArrayList<>();
 
     public void addNode(Node node) {

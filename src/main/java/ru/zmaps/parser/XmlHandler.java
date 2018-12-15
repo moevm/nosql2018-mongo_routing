@@ -9,6 +9,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 import ru.zmaps.db.NodeDAO;
+import ru.zmaps.db.RouteDAO;
 import ru.zmaps.db.TipDAO;
 import ru.zmaps.db.WayDAO;
 import ru.zmaps.parser.entity.*;
@@ -26,6 +27,11 @@ public class XmlHandler extends DefaultHandler {
     @Autowired
     TipDAO tipDAO;
 
+    @Autowired
+    RouteDAO routeDAO;
+
+    boolean route = false;
+
 
     private Element lastElem = null;
 
@@ -42,8 +48,16 @@ public class XmlHandler extends DefaultHandler {
         }
 
         if ("way".equals(qName)) {
-            wayDAO.save((Way) lastElem);
+            Way way = (Way) lastElem;
+            if (route) {
+                log.warn("save route!!!");
+                routeDAO.save(Route.cloneFromWay(way));
+                log.warn("!!!");
+                route = false;
+            }
+            wayDAO.save(way);
         }
+
     }
 
     private void parseElem(String uri, String localName, String qName, Attributes attributes) {
@@ -63,6 +77,14 @@ public class XmlHandler extends DefaultHandler {
 
             if (key.equals("name")) {
                 tipDAO.save(new Tip(val, lastElem.getId()));
+            }
+
+            if (val.equals("route")) {
+                if (key.equals("type")) {
+                    log.warn("Set route to true!");
+                    route = true;
+                }
+                log.info("Val route, key is " + key);
             }
 
             lastElem.addTag(key, val);

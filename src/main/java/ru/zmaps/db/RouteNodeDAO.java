@@ -3,18 +3,18 @@ package ru.zmaps.db;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.index.GeospatialIndex;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
-import ru.zmaps.parser.entity.Node;
+import ru.zmaps.parser.entity.RouteNode;
 import ru.zmaps.parser.entity.Way;
 
 import javax.annotation.PostConstruct;
-import java.util.List;
 
 @Repository
-public class WayDAO {
+public class RouteNodeDAO {
+
+
     @Autowired
     private MongoOperations mongo;
 
@@ -23,28 +23,8 @@ public class WayDAO {
         //mongo.indexOps(Way.class).ensureIndex(new GeospatialIndex("point"));
     }
 
-    public void save(Way way) {
+    public void save(RouteNode way) {
         mongo.save(way);
-    }
-
-    public List<Way> get(Criteria criteria) {
-
-        Query query = new Query();
-        query.addCriteria(criteria);
-
-        return mongo.find(query, Way.class);
-    }
-
-    public List<Way> get() {
-        return mongo.findAll(Way.class);
-    }
-
-    public Way getNearest(Point position) {
-
-        Query query = new Query();
-        query.addCriteria(Criteria.where("point").near(position)).limit(1);
-
-        return mongo.find(query, Way.class).get(0);
     }
 
 }
