@@ -53,7 +53,7 @@ map.on('click', function (e) {
             console.log(data);
             var popup = L.popup()
                 .setLatLng([dp.point.x, dp.point.y])
-                .setContent("Hello! <button class = \"from\">Отсюда</button class = \"To\"><button>Сюда</button>")
+                .setContent("Hello!<input type=\"button\" value=\"Отсюда\" class = \"from_to\" onClick=\"document.getElementById('filter-sidebar').style.display='none';document.getElementById('div1').style.display='block';return false;\"> <input type=\"button\" value=\"Сюда\" class = \"from_to\" onClick=\"document.getElementById('filter-sidebar').style.display='none';document.getElementById('div1').style.display='block';return false;\">")
                 .openOn(map)
 
 
