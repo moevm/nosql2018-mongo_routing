@@ -51,16 +51,18 @@ map.on('click', function (e) {
         success: function (data) {
             let dp = jQuery.parseJSON(data);
             console.log(data);
-            /*var popup = L.popup()
+            var popup = L.popup()
                 .setLatLng([dp.point.x, dp.point.y])
-                .setContent("I am a standalone popup.")
-                .openOn(map)*/
+                .setContent("Hello! <button class = \"from\">Отсюда</button class = \"To\"><button>Сюда</button>")
+                .openOn(map)
+
+
         }
     });
-    var popup = L.popup()
+    /*var popup = L.popup()
         .setLatLng([e.latlng.lat, e.latlng.lng])
         .setContent("I am a standalone popup.")
-        .openOn(map)
+        .openOn(map)*/
 });
 
 function drawLine(coordinates, color, weight, opacity, smooth) {
@@ -75,7 +77,7 @@ function drawLine(coordinates, color, weight, opacity, smooth) {
     return polyline;
 }
 
-drawLine([[59.991318, 30.319007], [59.994173, 30.316496], [59.977697, 30.317652], [59.972065, 30.307578]], 'red', 3, 0.5, 1);
+//drawLine([[59.991318, 30.319007], [59.994173, 30.316496], [59.977697, 30.317652], [59.972065, 30.307578]], 'red', 3, 0.5, 1);
 
 function drawPolygon(coordinates, color, weight, opacity, smooth) {
     let polygon = L.polygon(coordinates,
@@ -89,7 +91,7 @@ function drawPolygon(coordinates, color, weight, opacity, smooth) {
     return polygon;
 }
 
-drawPolygon([[59.969732, 30.301888], [59.967111, 30.309849], [59.964157, 30.308540], [59.959576, 30.301448]], 'blue', 5, 0.5, 1);
+//drawPolygon([[59.969732, 30.301888], [59.967111, 30.309849], [59.964157, 30.308540], [59.959576, 30.301448]], 'blue', 5, 0.5, 1);
 
 var osmUrl1 = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png';
 var osmUrl2 = 'http://c.tiles.wmflabs.org/hillshading/{z}/{x}/{y}.png';
