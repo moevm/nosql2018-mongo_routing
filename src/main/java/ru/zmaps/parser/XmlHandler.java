@@ -164,7 +164,7 @@ public class XmlHandler extends DefaultHandler {
                 log.error(ex);
             }
 
-            Thread.sleep(1_000);
+            Thread.sleep(500);
         }
     }
 }

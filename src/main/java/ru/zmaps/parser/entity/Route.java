@@ -24,7 +24,7 @@ public class Route extends Element {
         Route route = new Route(way.getId());
 
         for (Node node : way.getNodes()) {
-            route.addNode(new RouteNode(node));
+            route.addNode(new RouteNode(node.getPoint(),node.getId()));
         }
 
         route.setTags(way.getTags());

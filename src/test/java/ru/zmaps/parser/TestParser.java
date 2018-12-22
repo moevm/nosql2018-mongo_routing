@@ -11,7 +11,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import ru.zmaps.db.RouteDAO;
 import ru.zmaps.db.RouteNodeDAO;
 import ru.zmaps.db.WayDAO;
-import ru.zmaps.parser.entity.Node;
 import ru.zmaps.parser.entity.Route;
 import ru.zmaps.parser.entity.RouteNode;
 import ru.zmaps.parser.entity.Way;
@@ -19,8 +18,6 @@ import ru.zmaps.start.Application;
 
 import java.io.FileInputStream;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 
 @Log4j
@@ -57,14 +54,14 @@ public class TestParser {
 
     @SneakyThrows
     private void step1() {
-        FileInputStream in = new FileInputStream("C:\\Users\\Shabashoff\\IdeaProjects\\nosql-mongo\\src\\test\\resources\\amur.osm");
+        FileInputStream in = new FileInputStream("C:\\Users\\Shabashoff\\IdeaProjects\\nosql-mongo\\src\\test\\resources\\len.osm");
         reader.read(in);
     }
 
     @Test
     public void step2() throws InterruptedException {
 
-        int steps = 2_500;
+        int steps = 50_000;
 
         List<Way> way = wayDAO.get(Criteria.where("tags.highway").exists(true), steps, 0);
 
@@ -76,38 +73,7 @@ public class TestParser {
 
         int skip = steps;
 
-        ExecutorService service = Executors.newFixedThreadPool(4);
-
         List<RouteNode> lAddToDb = Collections.synchronizedList(new ArrayList<>());
-        final Object o = new Object();
-
-        /*for (int i = 0; i < 4; i++) {
-            service.execute(() -> {
-                while (true) {
-                    RouteNode v = null;
-                    synchronized (o) {
-                        if (lAddToDb.size() > 0) {
-                            v = lAddToDb.getFrom(lAddToDb.size() - 1);
-                            lAddToDb.remove(lAddToDb.size() - 1);
-
-                        }
-                    }
-                    if (v != null) {
-                        RouteNode rn = routeNodeDAO.getById(v.getId());
-                        rn.addRoute(v.getRoutes().getFrom(0));
-                        routeNodeDAO.save(rn);
-                    }
-                    else {
-                        try {
-                            Thread.sleep(15);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-
-            });
-        }*/
 
         while (way.size() != 0) {
 
@@ -124,7 +90,7 @@ public class TestParser {
                             rnMap.get(node.getId()).addRoute(route);
                         }
                         else {
-                            RouteNode e = new RouteNode(new Node(node.getId(), null));
+                            RouteNode e = new RouteNode(node.getPoint(), node.getId());
                             e.addRoute(route);
                             lAddToDb.add(e);
                         }

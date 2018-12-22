@@ -2,6 +2,7 @@ package ru.zmaps.db;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.index.GeospatialIndex;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
@@ -18,10 +19,12 @@ public class RouteNodeDAO {
     @Autowired
     private MongoOperations mongo;
 
+
     @PostConstruct
     public void initIndexes() {
-        //mongo.indexOps(Way.class).ensureIndex(new GeospatialIndex("point"));
+        mongo.indexOps(RouteNode.class).ensureIndex(new GeospatialIndex("point"));
     }
+
 
     public RouteNode getById(Long id) {
         Query query = new Query();

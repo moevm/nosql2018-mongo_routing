@@ -13,15 +13,14 @@ public class RouteNode {
     @Id
     long id;
 
-    @DBRef
-    private Node node;
+    private Point point;
 
     @DBRef(lazy = true)
     List<Route> routes;
 
-    public RouteNode(Node node) {
-        id = node.getId();
-        this.node = node;
+    public RouteNode(Point point, long id) {
+        this.id = id;
+        this.point = point;
         routes = new ArrayList<>();
     }
 
