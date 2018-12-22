@@ -12,7 +12,7 @@
 <body>
 <div id="map"></div>
 <div id="pan">
-    <form id="filter-sidebar"class="d1" action="#" method="post">
+    <form id="filter-sidebar" class="d1" action="#" method="post">
         <div class="filter-select-wrap">
             <input id="filter-address" class="filter-select filter-tax" name="location"
                    data-address='["location_1","alabama","alaska","anchorage","arizona","arkansas","birmingham","california","chandler","colorado","connecticut","denver","florida","georgia","gilbert","glendale","hartford","hawaii","hollywood","honolulu","huntsville","idaho","illinois","indiana","indianapolis","iowa","kansas","kentucky","little-rock","los-angeles","louisiana","louisville","massachusetts","mesa","michigan","minnesota","mobile","montgomery","moreno-valley","naperville","nebraska","nevada","new-hampshire","new-jersey","new-orleans","new-york","newark","ohio","olathe","orlando","palmdale","paterson","pennsylvania","peoria","philadelphia","pittsburgh","reno","rhode-island","rochester","rochester-new-york","rockford","sacramento"]'
@@ -25,10 +25,12 @@
 
     </form>
     <div id="div1" class="">
-        <input class = "route">
-        <input class = "route">
-        <button class="from_to" >Построить маршрут</button>
-
+        <label style="margin-right: 10px; margin-left: 10px;">Отсюда</label>
+        <input class="route" style="margin-bottom: 10px; width: 190px; ">
+        <label style="margin-left: 10px;margin-right: 25px;"> Сюда </label>
+        <input class="route" style="margin-bottom: 10px; width: 190px; ">
+        <button class="from_to">Построить маршрут</button>
+        <button class="from_to" onClick="document.getElementById('div1').style.display='none';document.getElementById('filter-sidebar').style.display='block';return false;">Отмена</button>
     </div>
 
 </div>
