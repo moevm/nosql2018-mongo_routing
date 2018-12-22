@@ -45,7 +45,18 @@ if (navigator.geolocation) {
 
 
 map.on('click', function (e) {
-    console.log("Lat, Lon : " + e.latlng.lat + ", " + e.latlng.lng);
+
+    $.ajax({
+        url: "./api/point/near?x=" + e.latlng.lat + "&y=" + e.latlng.lng,//id1=659264823&id2=659264399
+        success: function (data) {
+            let dp = jQuery.parseJSON(data);
+            console.log(data);
+            /*var popup = L.popup()
+                .setLatLng([dp.point.x, dp.point.y])
+                .setContent("I am a standalone popup.")
+                .openOn(map)*/
+        }
+    });
     var popup = L.popup()
         .setLatLng([e.latlng.lat, e.latlng.lng])
         .setContent("I am a standalone popup.")
@@ -97,56 +108,52 @@ var mixed = {
 L.control.layers(null, mixed).addTo(map);
 
 
-
-
-
 //функция поиска совпадений вводимых символов
 function findEl(el, array, value) {
-   var coincidence = false;
-   el.empty();//очищаем список совпадений
-   for (var i = 0; i < array.length; i++){
-         if (array[i].match('^'+value)){//проверяем каждый елемент на совпадение побуквенно
-            el.children('li').each(function (){//проверяем есть ли совпавшие елементы среди выведенных
-               if(array[i] === $(this).text()) {
-                  coincidence = true;//если есть совпадения то true
-               }
+    var coincidence = false;
+    el.empty();//очищаем список совпадений
+    for (var i = 0; i < array.length; i++) {
+        if (array[i].match('^' + value)) {//проверяем каждый елемент на совпадение побуквенно
+            el.children('li').each(function () {//проверяем есть ли совпавшие елементы среди выведенных
+                if (array[i] === $(this).text()) {
+                    coincidence = true;//если есть совпадения то true
+                }
             });
-            if(coincidence === false){
-               el.append('<li class="js-filter-address">'+array[i]+'</li>');//если нету совпадений то добавляем уникальное название в список
+            if (coincidence === false) {
+                el.append('<li class="js-filter-address">' + array[i] + '</li>');//если нету совпадений то добавляем уникальное название в список
             }
-         }
-   }
+        }
+    }
 }
 
 var filterInput = $('#filter-address'),
-   filterUl = $('.ul-addresses');
+    filterUl = $('.ul-addresses');
 
 //проверка при каждом вводе символа
-filterInput.bind('input propertychange', function(){
-   if($(this).val() !== ''){
-      filterUl.fadeIn(100);
-      findEl(filterUl,$(this).data('address'),$(this).val());
-   }
-   else{
-      filterUl.fadeOut(100);
-   }
+filterInput.bind('input propertychange', function () {
+    if ($(this).val() !== '') {
+        filterUl.fadeIn(100);
+        findEl(filterUl, $(this).data('address'), $(this).val());
+    } else {
+        filterUl.fadeOut(100);
+    }
 });
 
 //при клике на елемент выпадалки присваиваем значение в инпут и ставим триггер на его изменение
-filterUl.on('click','.js-filter-address', function(e){
-   $('#filter-address').val('');
-   filterInput.val($(this).text());
-   filterInput.trigger('change');
-   filterUl.fadeOut(100);
+filterUl.on('click', '.js-filter-address', function (e) {
+    $('#filter-address').val('');
+    filterInput.val($(this).text());
+    filterInput.trigger('change');
+    filterUl.fadeOut(100);
 
 
-function addQuestion() {
+    function addQuestion() {
         var newdiv = document.createElement("div");
         newdiv.innerHTML = "<div> fgb </div>";
-         //newdiv.appendTo('div#quest');
-         document.getElementById("parentId").appendChild(newdiv);
-         return false;
-  }
+        //newdiv.appendTo('div#quest');
+        document.getElementById("parentId").appendChild(newdiv);
+        return false;
+    }
 });
 
 

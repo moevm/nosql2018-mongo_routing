@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import ru.zmaps.parser.entity.Node;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
 
 @Repository
 public class NodeDAO {
@@ -23,6 +24,10 @@ public class NodeDAO {
 
     public void save(Node node) {
         mongo.save(node);
+    }
+
+    public void save(List<Node> node) {
+        mongo.insertAll(node);
     }
 
     public Node getNodeById(Long id) {

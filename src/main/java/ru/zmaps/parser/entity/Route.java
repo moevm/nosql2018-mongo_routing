@@ -9,11 +9,11 @@ import java.util.List;
 
 @Data
 public class Route extends Element {
-    public Route(long id) {
+    public Route(Long id) {
         super(id);
     }
 
-    @DBRef
+    @DBRef(lazy = true)
     final List<RouteNode> nodes = new ArrayList<>();
 
     public void addNode(RouteNode node) {

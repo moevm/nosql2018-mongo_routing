@@ -3,11 +3,9 @@ package ru.zmaps.db;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.index.GeospatialIndex;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
-import ru.zmaps.parser.entity.Node;
 import ru.zmaps.parser.entity.Way;
 
 import javax.annotation.PostConstruct;
@@ -27,12 +25,16 @@ public class WayDAO {
         mongo.save(way);
     }
 
-    public List<Way> get(Criteria criteria) {
+    public void save(List<Way> way) {
+        mongo.insertAll(way);
+    }
+
+    public List<Way> get(Criteria criteria,int limit,int skip) {
 
         Query query = new Query();
         query.addCriteria(criteria);
 
-        return mongo.find(query, Way.class);
+        return mongo.find(query.limit(limit).skip(skip), Way.class);
     }
 
     public List<Way> get() {

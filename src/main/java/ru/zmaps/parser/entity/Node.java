@@ -8,7 +8,7 @@ public class Node extends Element {
     private Point point;
 
     public Node() {
-        super(-1);
+        super(-1L);
     }
 
     public Node(long id, Point point) {

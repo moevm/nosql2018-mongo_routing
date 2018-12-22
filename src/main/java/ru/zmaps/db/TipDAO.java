@@ -22,6 +22,10 @@ public class TipDAO {
         mongo.save(tip);
     }
 
+    public void save(List<Tip> tip) {
+        mongo.insertAll(tip);
+    }
+
     public List<Tip> getTips(String substr, int limit) {
         Query query = new Query();
         query.addCriteria(Criteria.where("name").is(Pattern.compile(substr, Pattern.CASE_INSENSITIVE))).limit(limit);

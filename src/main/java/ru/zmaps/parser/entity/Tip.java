@@ -11,5 +11,5 @@ import org.springframework.data.mongodb.core.index.Indexed;
 public class Tip {
     @Indexed
     String name;
-    Long id;
+    Long wayId;
 }

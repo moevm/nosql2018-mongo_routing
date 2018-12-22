@@ -9,7 +9,7 @@ import java.util.List;
 
 @Data
 public class Way extends Element {
-    public Way(long id) {
+    public Way(Long id) {
         super(id);
     }
 

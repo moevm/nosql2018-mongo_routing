@@ -5,22 +5,22 @@ import lombok.extern.log4j.Log4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import ru.zmaps.db.RouteDAO;
 import ru.zmaps.db.RouteNodeDAO;
 import ru.zmaps.db.WayDAO;
+import ru.zmaps.parser.entity.Node;
 import ru.zmaps.parser.entity.Route;
 import ru.zmaps.parser.entity.RouteNode;
 import ru.zmaps.parser.entity.Way;
 import ru.zmaps.start.Application;
 
 import java.io.FileInputStream;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 @Log4j
@@ -50,28 +50,104 @@ public class TestParser {
 
     @Test
     public void parsingWays() throws Exception {
-        FileInputStream in = new FileInputStream("C:\\Users\\Shabashoff\\IdeaProjects\\nosql-mongo\\src\\test\\resources\\ways.osm");
+        FileInputStream in = new FileInputStream("C:\\Users\\Shabashoff\\IdeaProjects\\nosql-mongo\\src\\test\\resources\\len.osm");
 
         reader.read(in);
     }
 
     @SneakyThrows
     private void step1() {
-        FileInputStream in = new FileInputStream("C:\\Users\\Shabashoff\\IdeaProjects\\nosql-mongo\\src\\test\\resources\\map.osm");
+        FileInputStream in = new FileInputStream("C:\\Users\\Shabashoff\\IdeaProjects\\nosql-mongo\\src\\test\\resources\\amur.osm");
         reader.read(in);
     }
 
     @Test
-    public void step2() {
+    public void step2() throws InterruptedException {
 
-        List<Way> way = wayDAO.get(Criteria.where("tags.highway").exists(true));
+        int steps = 2_500;
 
-        for (Way w : way) {
-            Route route = Route.cloneFromWay(w);
-            for (RouteNode node : route.getNodes()) {
-                routeNodeDAO.save(node);
+        List<Way> way = wayDAO.get(Criteria.where("tags.highway").exists(true), steps, 0);
+
+        List<Route> routesList = new ArrayList<>();
+
+        HashMap<Long, RouteNode> rnMap = new HashMap<>();
+
+        HashSet<Long> ids = new HashSet<>();
+
+        int skip = steps;
+
+        ExecutorService service = Executors.newFixedThreadPool(4);
+
+        List<RouteNode> lAddToDb = Collections.synchronizedList(new ArrayList<>());
+        final Object o = new Object();
+
+        /*for (int i = 0; i < 4; i++) {
+            service.execute(() -> {
+                while (true) {
+                    RouteNode v = null;
+                    synchronized (o) {
+                        if (lAddToDb.size() > 0) {
+                            v = lAddToDb.getFrom(lAddToDb.size() - 1);
+                            lAddToDb.remove(lAddToDb.size() - 1);
+
+                        }
+                    }
+                    if (v != null) {
+                        RouteNode rn = routeNodeDAO.getById(v.getId());
+                        rn.addRoute(v.getRoutes().getFrom(0));
+                        routeNodeDAO.save(rn);
+                    }
+                    else {
+                        try {
+                            Thread.sleep(15);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+            });
+        }*/
+
+        while (way.size() != 0) {
+
+            for (Way w : way) {
+                Route route = Route.cloneFromWay(w);
+                for (RouteNode node : route.getNodes()) {
+                    if (!ids.contains(node.getId())) {
+                        node.addRoute(route);
+                        rnMap.put(node.getId(), node);
+                        ids.add(node.getId());
+                    }
+                    else {
+                        if (rnMap.containsKey(node.getId())) {
+                            rnMap.get(node.getId()).addRoute(route);
+                        }
+                        else {
+                            RouteNode e = new RouteNode(new Node(node.getId(), null));
+                            e.addRoute(route);
+                            lAddToDb.add(e);
+                        }
+                    }
+                }
+                routesList.add(route);
             }
-            routeDAO.save(route);
+
+            routeDAO.save(routesList);
+
+            way = wayDAO.get(Criteria.where("tags.highway").exists(true), steps, skip);
+            skip += steps;
+
+            routesList.clear();
+        }
+
+        routeNodeDAO.save(rnMap.values());
+        rnMap.clear();
+
+
+        while (lAddToDb.size() > 0) {
+            log.debug("Waiting end of route ways, size:" + lAddToDb.size());
+            Thread.sleep(100);
         }
     }
 

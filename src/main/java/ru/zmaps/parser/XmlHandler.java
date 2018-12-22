@@ -1,6 +1,7 @@
 package ru.zmaps.parser;
 
 import lombok.AccessLevel;
+import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,15 +10,27 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 import ru.zmaps.db.NodeDAO;
-import ru.zmaps.db.RouteDAO;
 import ru.zmaps.db.TipDAO;
 import ru.zmaps.db.WayDAO;
-import ru.zmaps.parser.entity.*;
+import ru.zmaps.parser.entity.Element;
+import ru.zmaps.parser.entity.Node;
+import ru.zmaps.parser.entity.Tip;
+import ru.zmaps.parser.entity.Way;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Log4j
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class XmlHandler extends DefaultHandler {
+
+    Map<Long, Node> nodes = new HashMap<>();
+
     @Autowired
     NodeDAO nodeDAO;
 
@@ -27,10 +40,16 @@ public class XmlHandler extends DefaultHandler {
     @Autowired
     TipDAO tipDAO;
 
-    @Autowired
-    RouteDAO routeDAO;
 
-    boolean route = false;
+    final List<Node> listNode = new ArrayList<>();
+    final List<Way> listWay = new ArrayList<>();
+    final List<Tip> listTips = new ArrayList<>();
+
+    ExecutorService executor = Executors.newSingleThreadExecutor();
+
+    public XmlHandler() {
+        executor.execute(this::run);
+    }
 
 
     private Element lastElem = null;
@@ -43,19 +62,27 @@ public class XmlHandler extends DefaultHandler {
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if ("node".equals(qName)) {
-            nodeDAO.save((Node) lastElem);
+            Node lastElem = (Node) this.lastElem;
+            nodes.put(lastElem.getId(), lastElem);
+
+            synchronized (listNode) {
+                listNode.add(lastElem);
+            }
+
             return;
         }
 
         if ("way".equals(qName)) {
             Way way = (Way) lastElem;
-            if (route) {
+            /*if (route) {
                 log.warn("save route!!!");
                 routeDAO.save(Route.cloneFromWay(way));
                 log.warn("!!!");
                 route = false;
+            }*/
+            synchronized (listWay) {
+                listWay.add(way);
             }
-            wayDAO.save(way);
         }
 
     }
@@ -72,20 +99,15 @@ public class XmlHandler extends DefaultHandler {
         }
 
         if ("tag".equals(qName)) {
-            String key = attributes.getValue("k");
-            String val = attributes.getValue("v");
+            String key = attributes.getValue("k").replace('.', '-');
+            String val = attributes.getValue("v").replace('.', '-');
 
-            if (key.equals("name")) {
-                tipDAO.save(new Tip(val, lastElem.getId()));
-            }
-
-            if (val.equals("route")) {
-                if (key.equals("type")) {
-                    log.warn("Set route to true!");
-                    route = true;
+            if (key.equals("name") && lastElem instanceof Way) {
+                synchronized (listTips) {
+                    listTips.add(new Tip(val, lastElem.getId()));
                 }
-                log.info("Val route, key is " + key);
             }
+
 
             lastElem.addTag(key, val);
 
@@ -93,12 +115,56 @@ public class XmlHandler extends DefaultHandler {
         }
 
         if ("nd".equals(qName)) {
-            ((Way) lastElem).addNode(nodeDAO.getNodeById(Long.valueOf(attributes.getValue("ref"))));
+            ((Way) lastElem).addNode(nodes.get(Long.valueOf(attributes.getValue("ref"))));
         }
 
         if ("way".equals(qName)) {
             long id = Long.parseLong(attributes.getValue("id"));
             lastElem = new Way(id);
+        }
+    }
+
+    public List<Node> getListNode() {
+        return listNode;
+    }
+
+    public List<Tip> getListTips() {
+        return listTips;
+    }
+
+    public List<Way> getListWay() {
+        return listWay;
+    }
+
+    @SneakyThrows
+    private void run() {
+        while (true) {
+            try {
+                synchronized (listNode) {
+                    if (listNode.size() > 0) {
+                        nodeDAO.save(listNode);
+                        listNode.clear();
+                    }
+                }
+
+                synchronized (listWay) {
+                    if (listWay.size() > 0) {
+                        wayDAO.save(listWay);
+                        listWay.clear();
+                    }
+                }
+
+                synchronized (listTips) {
+                    if (listTips.size() > 0) {
+                        tipDAO.save(listTips);
+                        listTips.clear();
+                    }
+                }
+            } catch (Exception ex) {
+                log.error(ex);
+            }
+
+            Thread.sleep(1_000);
         }
     }
 }

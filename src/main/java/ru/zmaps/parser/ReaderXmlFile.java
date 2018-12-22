@@ -20,6 +20,13 @@ public class ReaderXmlFile {
 
     public void read(InputStream stream) throws Exception {
         factory.newSAXParser().parse(stream, dh);
+        Thread.sleep(1_500);//To add all entities to db
+
+        while (dh.getListNode().size() != 0) Thread.sleep(100);
+        while (dh.getListTips().size() != 0) Thread.sleep(100);
+        while (dh.getListWay().size() != 0) Thread.sleep(100);
+
+        Thread.sleep(1_500);//To add all entities to db
     }
 
     public void read(InputStream stream, DefaultHandler handler) throws Exception {
