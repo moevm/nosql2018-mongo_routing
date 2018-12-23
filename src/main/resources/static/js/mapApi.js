@@ -109,54 +109,32 @@ var mixed = {
 
 L.control.layers(null, mixed).addTo(map);
 
-
-//функция поиска совпадений вводимых символов
-function findEl(el, array, value) {
-    var coincidence = false;
-    el.empty();//очищаем список совпадений
-    for (var i = 0; i < array.length; i++) {
-        if (array[i].match('^' + value)) {//проверяем каждый елемент на совпадение побуквенно
-            el.children('li').each(function () {//проверяем есть ли совпавшие елементы среди выведенных
-                if (array[i] === $(this).text()) {
-                    coincidence = true;//если есть совпадения то true
-                }
-            });
-            if (coincidence === false) {
-                el.append('<li class="js-filter-address">' + array[i] + '</li>');//если нету совпадений то добавляем уникальное название в список
+$('#filter-address').on('input',function(e){
+    console.log(e);
+    $.ajax({
+        url: "./api/tips/get?str=" + $('#filter-address').val(),
+        success: function (data) {
+            console.log(data);
+            let dp = jQuery.parseJSON(data);
+             $( ".ul-addresses").empty();
+            for (n in dp) {
+                $( ".ul-addresses").append("<li>" + dp[n].name + "</li>");
             }
+                function getEventTarget(e) {
+                    e = e || window.event;
+                    return e.target || e.srcElement;
+                }
+
+                var ul = document.getElementById('test');
+                ul.onclick = function(event) {
+                    var target = getEventTarget(event);
+                    alert(target.innerHTML);
+
+
+                    L.marker([56.326944, 44.0075]).addTo(map);
+                };
         }
-    }
-}
-
-var filterInput = $('#filter-address'),
-    filterUl = $('.ul-addresses');
-
-//проверка при каждом вводе символа
-filterInput.bind('input propertychange', function () {
-    if ($(this).val() !== '') {
-        filterUl.fadeIn(100);
-        findEl(filterUl, $(this).data('address'), $(this).val());
-    } else {
-        filterUl.fadeOut(100);
-    }
+    });
 });
-
-//при клике на елемент выпадалки присваиваем значение в инпут и ставим триггер на его изменение
-filterUl.on('click', '.js-filter-address', function (e) {
-    $('#filter-address').val('');
-    filterInput.val($(this).text());
-    filterInput.trigger('change');
-    filterUl.fadeOut(100);
-
-
-    function addQuestion() {
-        var newdiv = document.createElement("div");
-        newdiv.innerHTML = "<div> fgb </div>";
-        //newdiv.appendTo('div#quest');
-        document.getElementById("parentId").appendChild(newdiv);
-        return false;
-    }
-});
-
 
 
