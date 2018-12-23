@@ -53,7 +53,7 @@ map.on('click', function (e) {
             console.log(data);
             var popup = L.popup()
                 .setLatLng([dp.point.x, dp.point.y])
-                .setContent(""+dp.point.x+" "+dp.point.y+"<input type=\"button\" value=\"Отсюда\" class = \"from_to\" onClick=\"clickFrom("+dp.point.x+", "+dp.point.y+")\"> <input type=\"button\" value=\"Сюда\" class = \"from_to\" onClick=\"clickTo("+dp.point.x+", "+dp.point.y+")\">")
+                .setContent("" + dp.point.x + " " + dp.point.y + "<input type=\"button\" value=\"Отсюда\" class = \"from_to\" onClick=\"clickFrom(" + dp.point.x + ", " + dp.point.y + ")\"> <input type=\"button\" value=\"Сюда\" class = \"from_to\" onClick=\"clickTo(" + dp.point.x + ", " + dp.point.y + ")\">")
                 .openOn(map)
 
 
@@ -124,28 +124,27 @@ $('#filter-address').on('input', function (e) {
             function getEventTarget(e) {
                 e = e || window.event;
                 return e.target || e.srcElement;
-            };
-
+            }
             var ul = document.getElementById('test');
             ul.onclick = function (event) {
                 var target = getEventTarget(event);
                 alert(target.innerHTML);
 
-                   $.ajax({
-                           url: "./api/node/get?id=" + dp.wayId,//id1=659264823&id2=659264399
-                           success: function (data) {
-                               let p = jQuery.parseJSON(data);
-                               console.log(data);
-                               var popup = L.popup()
-                                   .setLatLng([p.point.x, p.point.y])
-                                   .setContent(""+p.point.x+" "+p.point.y+"<input type=\"button\" value=\"Отсюда\" class = \"from_to\" onClick=\"clickFrom("+p.point.x+", "+p.point.y+")\"> <input type=\"button\" value=\"Сюда\" class = \"from_to\" onClick=\"clickTo("+p.point.x+", "+p.point.y+")\">")
-                                   .openOn(map)
-			   }
-                   })
-             };
-     }
- })
- ;
+                $.ajax({
+                    url: "./api/node/get?id=" + dp.wayId,//id1=659264823&id2=659264399
+                    success: function (data) {
+                        let p = jQuery.parseJSON(data);
+                        console.log(data);
+                        var popup = L.popup()
+                            .setLatLng([p.point.x, p.point.y])
+                            .setContent("" + p.point.x + " " + p.point.y + "<input type=\"button\" value=\"Отсюда\" class = \"from_to\" onClick=\"clickFrom(" + p.point.x + ", " + p.point.y + ")\"> <input type=\"button\" value=\"Сюда\" class = \"from_to\" onClick=\"clickTo(" + p.point.x + ", " + p.point.y + ")\">")
+                            .openOn(map)
+                    }
+                })
+            };
+        }
+    });
+});
 
 function buildRoute(from, to) {
     $.ajax({
@@ -162,26 +161,27 @@ function buildRoute(from, to) {
     });
 }
 
-function clickCancel(){
-    document.getElementById('div1').style.display='none';
-    document.getElementById('filter-sidebar').style.display='block';
+function clickCancel() {
+    document.getElementById('div1').style.display = 'none';
+    document.getElementById('filter-sidebar').style.display = 'block';
     document.getElementById('from').value = " ";
     document.getElementById('to').value = " ";
     return false;
 }
-function clickTo(x, y){
-    document.getElementById('div1').style.display='block';
-    document.getElementById('filter-sidebar').style.display='none';
-    document.getElementById('to').value = x+" "+y;
+
+function clickTo(x, y) {
+    document.getElementById('div1').style.display = 'block';
+    document.getElementById('filter-sidebar').style.display = 'none';
+    document.getElementById('to').value = x + " " + y;
     return false;
 
 }
 
-function clickFrom(x, y){
-    document.getElementById('div1').style.display='block';
-    document.getElementById('filter-sidebar').style.display='none';
+function clickFrom(x, y) {
+    document.getElementById('div1').style.display = 'block';
+    document.getElementById('filter-sidebar').style.display = 'none';
 
-    document.getElementById('from').value = x+" "+y;
+    document.getElementById('from').value = x + " " + y;
     return false;
 }
 
