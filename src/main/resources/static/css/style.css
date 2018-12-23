@@ -71,8 +71,8 @@
     color: #fff;
 }
 .b-popup{
-    width:100%;
-    min-height:100%;
+    width: 200px;
+
     background-color: rgba(0,0,0,0.5);
     overflow:hidden;
     position:fixed;
@@ -80,8 +80,8 @@
 }
 .b-popup .b-popup-content{
     margin:40px auto 0px auto;
-    width:100px;
-    height: 40px;
+    width:200px;
+    /*height: 40px;*/
     padding:10px;
     background-color: #c5c5c5;
     border-radius:5px;
@@ -116,3 +116,7 @@
 
  .route{
  }
+
+.leaflet-popup-content{
+  width: 200px;
+}
