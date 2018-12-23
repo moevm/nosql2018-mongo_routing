@@ -47,7 +47,7 @@ if (navigator.geolocation) {
 map.on('click', function (e) {
 
     $.ajax({
-        url: "./api/point/near?x=" + e.latlng.lat + "&y=" + e.latlng.lng,//id1=659264823&id2=659264399
+        url: "./api/route/node/near?x=" + e.latlng.lat + "&y=" + e.latlng.lng,//id1=659264823&id2=659264399
         success: function (data) {
             let dp = jQuery.parseJSON(data);
             console.log(data);
@@ -109,32 +109,46 @@ var mixed = {
 
 L.control.layers(null, mixed).addTo(map);
 
-$('#filter-address').on('input',function(e){
+$('#filter-address').on('input', function (e) {
     console.log(e);
     $.ajax({
         url: "./api/tips/get?str=" + $('#filter-address').val(),
         success: function (data) {
             console.log(data);
             let dp = jQuery.parseJSON(data);
-             $( ".ul-addresses").empty();
+            $(".ul-addresses").empty();
             for (n in dp) {
-                $( ".ul-addresses").append("<li>" + dp[n].name + "</li>");
+                $(".ul-addresses").append("<li>" + dp[n].name + "</li>");
             }
-                function getEventTarget(e) {
-                    e = e || window.event;
-                    return e.target || e.srcElement;
-                }
 
-                var ul = document.getElementById('test');
-                ul.onclick = function(event) {
-                    var target = getEventTarget(event);
-                    alert(target.innerHTML);
+            function getEventTarget(e) {
+                e = e || window.event;
+                return e.target || e.srcElement;
+            }
+
+            var ul = document.getElementById('test');
+            ul.onclick = function (event) {
+                var target = getEventTarget(event);
+                alert(target.innerHTML);
 
 
-                    L.marker([56.326944, 44.0075]).addTo(map);
-                };
+                L.marker([56.326944, 44.0075]).addTo(map);
+            };
         }
     });
 });
 
-
+function buildRoute(from, to) {
+    $.ajax({
+        url: "./api/route/build?id1=" + from + "&id2=" + to,
+        success: function (data) {
+            console.log(data);
+            let route = jQuery.parseJSON(data);
+            let arr = [];
+            for (let i in route.nodes) {
+                arr.push([route.nodes[i].point.x, route.nodes[i].point.y]);
+            }
+            drawLine(arr, 'red', 3, 0.5, 1);
+        }
+    });
+}

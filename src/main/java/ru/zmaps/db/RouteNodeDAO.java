@@ -1,6 +1,7 @@
 package ru.zmaps.db;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.index.GeospatialIndex;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -36,6 +37,14 @@ public class RouteNodeDAO {
         return routeNodes.get(0);
 
     }
+
+    public RouteNode getNearest(Point position) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("point").near(position)).limit(1);
+
+        return mongo.find(query, RouteNode.class).get(0);
+    }
+
 
     public void save(Collection<RouteNode> rn) {
         mongo.insertAll(rn);

@@ -63,7 +63,7 @@ public class TestParser {
 
         int steps = 50_000;
 
-        List<Way> way = wayDAO.get(Criteria.where("tags.highway").exists(true), steps, 0);
+        List<Way> way = wayDAO.get(Criteria.where("tags.motor_vehicle").exists(true), steps, 0);
 
         List<Route> routesList = new ArrayList<>();
 
@@ -101,7 +101,7 @@ public class TestParser {
 
             routeDAO.save(routesList);
 
-            way = wayDAO.get(Criteria.where("tags.highway").exists(true), steps, skip);
+            way = wayDAO.get(Criteria.where("tags.motor_vehicle").exists(true), steps, skip);
             skip += steps;
 
             routesList.clear();

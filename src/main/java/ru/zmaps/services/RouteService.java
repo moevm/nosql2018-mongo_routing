@@ -9,9 +9,7 @@ import ru.zmaps.db.RouteNodeDAO;
 import ru.zmaps.parser.entity.Route;
 import ru.zmaps.parser.entity.RouteNode;
 
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.PriorityQueue;
+import java.util.*;
 
 @Log4j
 @Service
@@ -23,7 +21,6 @@ public class RouteService {
     @Autowired
     RouteDAO routeDAO;
 
-    private final HashSet<Long> visitedRoute = new HashSet<>();
 
     public Route buildRoute(Long rnId1, Long rnId2) {
         RouteNode rn1 = routeNodeDAO.getById(rnId1);
@@ -31,20 +28,23 @@ public class RouteService {
 
         if (rn1 == null || finish == null) return null;
 
+        final HashSet<Long> vr = new HashSet<>();
 
         PriorityQueue<RouteSaver> queue = new PriorityQueue<>(Comparator.comparingDouble(a -> getDistance(a.getFrom().getPoint(), finish.getPoint())));
 
         for (Route route : rn1.getRoutes()) {
+            vr.add(route.getId());
+
             queue.add(new RouteSaver(route, rn1));
         }
 
         while (queue.peek().getFrom().getId() != finish.getId()) {
             RouteSaver peek = queue.peek();
 
-            log.info("Current first point: " + peek.getFrom());
-            log.info("Current delta: " + getDistance(peek.getFrom().getPoint(), finish.getPoint()));
+            //log.info("Current first point: " + peek.getFrom());
+            //log.info("Current delta: " + getDistance(peek.getFrom().getPoint(), finish.getPoint()));
 
-            RouteSaver next = peek.next();
+            RouteSaver next = peek.next(vr);
 
             if (next == null) {
                 queue.poll();
@@ -63,10 +63,15 @@ public class RouteService {
 
         Route w = new Route(null);
         RouteSaver peek = queue.peek();
+        Long prev = null;
         while (peek != null) {
-            w.addNode(peek.from);
+            w.getNodes().addAll(peek.getRoute(prev));
+
+            prev = peek.from.getId();
             peek = peek.prev;
         }
+
+        w.getNodes().forEach(o -> o.setRoutes(null));
 
         log.info("Build success");
 
@@ -85,8 +90,6 @@ public class RouteService {
         int cur = 0;
 
         public RouteSaver(Route route, RouteNode from) {
-            visitedRoute.add(route.getId());
-
             this.route = route;
             this.from = from;
         }
@@ -114,10 +117,10 @@ public class RouteService {
             return null;
         }
 
-        public RouteSaver next() {
+        public RouteSaver next(HashSet<Long> vr) {
             while (cur < route.getNodes().size()) {
                 RouteNode rn = route.getNodes().get(cur);
-                RouteSaver routeSaver = ifOkReturn(rn);
+                RouteSaver routeSaver = ifOkReturn(rn, vr);
 
                 if (routeSaver != null) {
                     return routeSaver;
@@ -128,16 +131,44 @@ public class RouteService {
             return null;
         }
 
-        private RouteSaver ifOkReturn(RouteNode rn) {
+        public List<RouteNode> getRoute(Long to) {
+            long from = this.from.getId();
+
+            if (to == null || from == to) return Collections.singletonList(this.from);
+
+            int fi = -1;
+            int ti = -1;
+
+            List<RouteNode> nodes = route.getNodes();
+
+            for (int i = 0; i < nodes.size(); i++) {
+                RouteNode node = nodes.get(i);
+                if (node.getId() == from) fi = i;
+                else {
+                    if (node.getId() == to) ti = i;
+                }
+            }
+
+            if (fi > ti) {
+                return route.getNodes().subList(ti, fi);
+            }
+
+            return route.getNodes().subList(fi, ti);
+        }
+
+        private RouteSaver ifOkReturn(RouteNode rn, HashSet<Long> vr) {
             for (int i = 0; i < rn.getRoutes().size(); i++) {
                 Route route = rn.getRoutes().get(i);
-                if (visitedRoute.contains(route.getId())) {
+                if (vr.contains(route.getId())) {
                     rn.getRoutes().remove(i--);
                 }
             }
 
             if (rn.getRoutes().size() > 0) {
-                return new RouteSaver(this, rn.getRoutes().remove(0), rn);
+                Route rm = rn.getRoutes().remove(0);
+                vr.add(rm.getId());
+
+                return new RouteSaver(this, rm, rn);
             }
 
             return null;

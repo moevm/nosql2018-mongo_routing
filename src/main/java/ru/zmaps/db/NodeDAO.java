@@ -34,7 +34,10 @@ public class NodeDAO {
         Query query = new Query();
         query.addCriteria(Criteria.where("id").is(id)).limit(1);
 
-        return mongo.find(query, Node.class).get(0);
+        List<Node> nodes = mongo.find(query, Node.class);
+        if (nodes.size() == 0) return null;
+
+        return nodes.get(0);
     }
 
     public Node getNearest(Point position) {

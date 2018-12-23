@@ -24,6 +24,10 @@ public class RouteNode {
         routes = new ArrayList<>();
     }
 
+    public void setRoutes(List<Route> rs) {
+        routes = rs;
+    }
+
     public void addRoute(Route route) {
         routes.add(route);
     }
