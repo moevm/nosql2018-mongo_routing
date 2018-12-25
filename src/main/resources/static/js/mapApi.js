@@ -116,32 +116,11 @@ $('#filter-address').on('input', function (e) {
         success: function (data) {
             console.log(data);
             let dp = jQuery.parseJSON(data);
+
             $(".ul-addresses").empty();
             for (n in dp) {
-                $(".ul-addresses").append("<li>" + dp[n].name + "</li>");
+                $(".ul-addresses").append("<li way=\""+dp[n].wayId+"\">" + dp[n].name + "</li>");
             }
-
-            function getEventTarget(e) {
-                e = e || window.event;
-                return e.target || e.srcElement;
-            }
-            var ul = document.getElementById('test');
-            ul.onclick = function (event) {
-                var target = getEventTarget(event);
-                alert(target.innerHTML);
-
-                $.ajax({
-                    url: "./api/node/get?id=" + dp.wayId,//id1=659264823&id2=659264399
-                    success: function (data) {
-                        let p = jQuery.parseJSON(data);
-                        console.log(data);
-                        var popup = L.popup()
-                            .setLatLng([p.point.x, p.point.y])
-                            .setContent("" + p.point.x + " " + p.point.y + "<input type=\"button\" value=\"Отсюда\" class = \"from_to\" onClick=\"clickFrom(" + p.point.x + ", " + p.point.y + ")\"> <input type=\"button\" value=\"Сюда\" class = \"from_to\" onClick=\"clickTo(" + p.point.x + ", " + p.point.y + ")\">")
-                            .openOn(map)
-                    }
-                })
-            };
         }
     });
 });
@@ -160,6 +139,32 @@ function buildRoute(from, to) {
         }
     });
 }
+
+
+            function getEventTarget(e) {
+                e = e || window.event;
+                return e.target || e.srcElement;
+            }
+
+var ul = document.getElementById('test');
+            ul.onclick = function (event) {
+                let target = getEventTarget(event);
+                let wayId = target.getAttribute("way");
+                alert(target.innerHTML);
+                alert(wayId);
+                $.ajax({
+                    url: "./api/way/get?id=" + wayId,//id1=659264823&id2=659264399
+                    success: function (data) {
+                        let p = jQuery.parseJSON(data);
+                        console.log(data);
+                        var popup = L.popup()
+                            .setLatLng([p.point.x, p.point.y])
+                            .setContent("" + p.point.x + " " + p.point.y + "<input type=\"button\" value=\"Отсюда\" class = \"from_to\" onClick=\"clickFrom(" + p.point.x + ", " + p.point.y + ")\"> <input type=\"button\" value=\"Сюда\" class = \"from_to\" onClick=\"clickTo(" + p.point.x + ", " + p.point.y + ")\">")
+                            .openOn(map)
+                    }
+                })
+            };
+
 
 function clickCancel() {
     document.getElementById('div1').style.display = 'none';
