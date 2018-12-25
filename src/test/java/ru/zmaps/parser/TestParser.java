@@ -63,7 +63,25 @@ public class TestParser {
 
         int steps = 50_000;
 
-        List<Way> way = wayDAO.get(Criteria.where("tags.motor_vehicle").exists(true), steps, 0);
+        List<String> highwayValues = Arrays.asList("motorway",
+                "trunk",
+                "primary",
+                "secondary",
+                "tertiary",
+                "unclassified",
+                "residential",
+                "living_street",
+                "service",
+                "secondary",
+                "motorway_link",
+                "trunk_link",
+                "primary_link",
+                "secondary_link",
+                "tertiary_link",
+                "track",
+                "pedestrian",
+                "escape",
+                "road");
 
         List<Route> routesList = new ArrayList<>();
 
@@ -71,45 +89,55 @@ public class TestParser {
 
         HashSet<Long> ids = new HashSet<>();
 
-        int skip = steps;
+        int skip;
 
         List<RouteNode> lAddToDb = Collections.synchronizedList(new ArrayList<>());
+        for (String highwayValue : highwayValues) {
+            skip = 0;
+            List<Way> way = wayDAO.get(Criteria.where("tags.highway").is(highwayValue), steps, skip);
+            skip += steps;
+            while (way.size() != 0) {
 
-        while (way.size() != 0) {
-
-            for (Way w : way) {
-                Route route = Route.cloneFromWay(w);
-                for (RouteNode node : route.getNodes()) {
-                    if (!ids.contains(node.getId())) {
-                        node.addRoute(route);
-                        rnMap.put(node.getId(), node);
-                        ids.add(node.getId());
-                    }
-                    else {
-                        if (rnMap.containsKey(node.getId())) {
-                            rnMap.get(node.getId()).addRoute(route);
+                for (Way w : way) {
+                    Route route = Route.cloneFromWay(w);
+                    for (RouteNode node : route.getNodes()) {
+                        if (!ids.contains(node.getId())) {
+                            node.addRoute(route);
+                            rnMap.put(node.getId(), node);
+                            ids.add(node.getId());
                         }
                         else {
-                            RouteNode e = new RouteNode(node.getPoint(), node.getId());
-                            e.addRoute(route);
-                            lAddToDb.add(e);
+                            if (rnMap.containsKey(node.getId())) {
+                                rnMap.get(node.getId()).addRoute(route);
+                            }
+                            else {
+                                RouteNode e = new RouteNode(node.getPoint(), node.getId());
+                                e.addRoute(route);
+                                lAddToDb.add(e);
+                            }
                         }
                     }
+                    routesList.add(route);
                 }
-                routesList.add(route);
+
+                try {
+                    routeDAO.save(routesList);
+                } catch (Exception e) {
+                    log.error(e);
+                    for (Route route : routesList) {
+                        routeDAO.save(route);
+                    }
+                }
+
+                way = wayDAO.get(Criteria.where("tags.highway").is(highwayValue), steps, skip);
+                skip += steps;
+
+                routesList.clear();
             }
-
-            routeDAO.save(routesList);
-
-            way = wayDAO.get(Criteria.where("tags.motor_vehicle").exists(true), steps, skip);
-            skip += steps;
-
-            routesList.clear();
         }
 
         routeNodeDAO.save(rnMap.values());
         rnMap.clear();
-
 
         while (lAddToDb.size() > 0) {
             log.debug("Waiting end of route ways, size:" + lAddToDb.size());

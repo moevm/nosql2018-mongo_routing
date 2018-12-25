@@ -41,8 +41,8 @@ public class RouteService {
         while (queue.peek().getFrom().getId() != finish.getId()) {
             RouteSaver peek = queue.peek();
 
-            //log.info("Current first point: " + peek.getFrom());
-            //log.info("Current delta: " + getDistance(peek.getFrom().getPoint(), finish.getPoint()));
+            log.info("Current first point: " + peek.getFrom());
+            log.info("Current delta: " + getDistance(peek.getFrom().getPoint(), finish.getPoint()));
 
             RouteSaver next = peek.next(vr);
 
