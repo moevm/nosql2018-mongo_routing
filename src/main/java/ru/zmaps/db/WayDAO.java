@@ -29,7 +29,7 @@ public class WayDAO {
         mongo.insertAll(way);
     }
 
-    public List<Way> get(Criteria criteria,int limit,int skip) {
+    public List<Way> get(Criteria criteria, int limit, int skip) {
 
         Query query = new Query();
         query.addCriteria(criteria);
@@ -39,6 +39,16 @@ public class WayDAO {
 
     public List<Way> get() {
         return mongo.findAll(Way.class);
+    }
+
+    public Way getById(Long id) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("id").is(id)).limit(1);
+
+        List<Way> nodes = mongo.find(query, Way.class);
+        if (nodes.size() == 0) return null;
+
+        return nodes.get(0);
     }
 
     public Way getNearest(Point position) {

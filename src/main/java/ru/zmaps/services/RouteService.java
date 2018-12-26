@@ -150,10 +150,14 @@ public class RouteService {
             }
 
             if (fi > ti) {
-                return route.getNodes().subList(ti, fi);
+                List<RouteNode> list = route.getNodes().subList(ti, fi);
+//                Collections.reverse(list);
+                return list;
             }
 
-            return route.getNodes().subList(fi, ti);
+            List<RouteNode> routeNodes = route.getNodes().subList(fi, ti);
+            Collections.reverse(routeNodes);
+            return routeNodes;
         }
 
         private RouteSaver ifOkReturn(RouteNode rn, HashSet<Long> vr) {
