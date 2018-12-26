@@ -53,7 +53,7 @@ map.on('click', function (e) {
             console.log(data);
             var popup = L.popup()
                 .setLatLng([dp.point.x, dp.point.y])
-                .setContent("" + dp.point.x + " " + dp.point.y + "<input type=\"button\" value=\"Отсюда\" class = \"from_to\" onClick=\"clickFrom(" + dp.point.x + ", " + dp.point.y ")\"> <input type=\"button\" value=\"Сюда\" class = \"from_to\" onClick=\"clickTo(" + dp.point.x + ", " + dp.point.y + ")\">")
+                .setContent("" + dp.point.x + " " + dp.point.y + ", " +dp.point.id+"<input type=\"button\" value=\"Отсюда\" class = \"from_to\" onClick=\"clickFrom(" + dp.point.x + ", " + dp.point.y +", " +dp.id+")\"> <input type=\"button\" value=\"Сюда\" class = \"from_to\" onClick=\"clickTo(" + dp.point.x + ", " + dp.point.y + ", " +dp.id+")\">")
                 .openOn(map)
 
 
@@ -157,11 +157,18 @@ ul.onclick = function (event) {
             console.log(data);
              var popup = L.popup()
                 .setLatLng([p.nodes[0].point.x, p.nodes[0].point.y])
-                .setContent("" + p.nodes[0].point.x + " " + p.nodes[0].point.y + "<br>" + p.tags.name + "<br>" +"<input type=\"button\" value=\"Отсюда\" class = \"from_to\" onClick=\"clickFrom(" + p.nodes[0].point.x + ", " + p.nodes[0].point.y + ", " + p.tags.name + ")\"> <input type=\"button\" value=\"Сюда\" class = \"from_to\" onClick=\"clickTo(" + p.nodes[0].point.x + ", " + p.nodes[0].point.y + p.tags.name + ")\">")
+                .setContent("" + p.nodes[0].point.x + " " + p.nodes[0].point.y + "<br>" + p.tags.name + "<br>" +"<input type=\"button\" value=\"Отсюда\" class = \"from_to\" onClick=\"clickFrom(" + p.nodes[0].point.x + ", " + p.nodes[0].point.y + ", '" + p.tags.name +", " + p.id");\"> <input type=\"button\" value=\"Сюда\" class = \"from_to\" onClick=\"clickTo(" + p.nodes[0].point.x + ", " + p.nodes[0].point.y +", '" + p.tags.name + ", " + p.id")\">")
                 .openOn(map)
         }
     })
 };
+
+
+function clickGo(){
+
+
+
+}
 
 
 function clickCancel() {
@@ -172,19 +179,22 @@ function clickCancel() {
     return false;
 }
 
-function clickTo(x, y, name) {
+function clickTo(x, y, name, id) {
     document.getElementById('div1').style.display = 'block';
     document.getElementById('filter-sidebar').style.display = 'none';
-    document.getElementById('to').value = name;
+    document.getElementById('to').routeId = id;
+    console.log(id);
+ if (name === undefined) document.getElementById('to').value = x+" "+y;
+ else document.getElementById('to').value = name;
     return false;
 
 }
 
-function clickFrom(x, y, name="default") {
+function clickFrom(x, y, name, id) {
     document.getElementById('div1').style.display = 'block';
     document.getElementById('filter-sidebar').style.display = 'none';
-
-if (name =="default") document.getElementById('from').value = x+" "+y;
+    document.getElementById('from').routeId = id;
+if (name === undefined) document.getElementById('from').value = x+" "+y;
 else document.getElementById('from').value = name;
     return false;
 }
