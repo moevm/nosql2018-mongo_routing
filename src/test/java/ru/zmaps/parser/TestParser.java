@@ -54,7 +54,7 @@ public class TestParser {
 
     @SneakyThrows
     private void step1() {
-        FileInputStream in = new FileInputStream("C:\\Users\\niksh\\Desktop\\mongo\\src\\test\\resources\\map.osm");
+        FileInputStream in = new FileInputStream("C:\\Users\\niksh\\Desktop\\mng\\len.osm");
         reader.read(in);
     }
 
