@@ -36,19 +36,32 @@
   cursor: pointer;
 }
 
+.li {
+
+}
+.li:hover{
+    background: #F5F5F5;
+
+}
 
 .ul-addresses {
     height: 100%;
-    width: 100%;
+    padding-left: 10 px;
+    transition: 0.1s;
+    width: 304px;
     right: 18px;
     background: #F9F0DA;
+    list-style-type: none;
+    margin: 0px;
+    padding: 0px;
 }
 
 .ul-addresses:hover {
     height: 100%;
-    width: 100%;
-    right: 18px;
+    width: 304px;
+    padding-left: 10px;
     background: #F9F0DA;
+    list-style-type: none;
 }
 
 .js-filter-address:hover {
@@ -108,9 +121,7 @@
 
  #div1{
    display: none;
-   width: 310px;
-
-
+   width: 310 px;
 
  }
 
@@ -119,4 +130,9 @@
 
 .leaflet-popup-content{
   width: 200px;
+}
+
+.leaflet-top leaflet-right{
+    padding-top: 150px;
+
 }
