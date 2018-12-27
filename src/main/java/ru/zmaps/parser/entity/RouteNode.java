@@ -1,6 +1,8 @@
 package ru.zmaps.parser.entity;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -9,11 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class RouteNode {
     @Id
     long id;
 
-    private Point point;
+    Point point;
 
     @DBRef(lazy = true)
     List<Route> routes;

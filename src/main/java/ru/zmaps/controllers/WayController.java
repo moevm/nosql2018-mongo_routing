@@ -17,13 +17,6 @@ public class WayController {
 
     private final Gson gson = new Gson();
 
-
-    @GetMapping("/near")
-    public String getNearest(@RequestParam double x, @RequestParam double y) {
-        //return gson.toJson(service.getNearest(x, y));
-        return null;
-    }
-
     @GetMapping("/get")
     public String getById(@RequestParam long id) {
         return gson.toJson(service.getById(id));

@@ -10,12 +10,10 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 import ru.zmaps.db.NodeDAO;
+import ru.zmaps.db.RelationDAO;
 import ru.zmaps.db.TipDAO;
 import ru.zmaps.db.WayDAO;
-import ru.zmaps.parser.entity.Element;
-import ru.zmaps.parser.entity.Node;
-import ru.zmaps.parser.entity.Tip;
-import ru.zmaps.parser.entity.Way;
+import ru.zmaps.parser.entity.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,10 +38,13 @@ public class XmlHandler extends DefaultHandler {
     @Autowired
     TipDAO tipDAO;
 
+    @Autowired
+    RelationDAO relationDAO;
 
     final List<Node> listNode = new ArrayList<>();
     final List<Way> listWay = new ArrayList<>();
     final List<Tip> listTips = new ArrayList<>();
+    final List<Relation> listRelation = new ArrayList<>();
 
     ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -74,14 +75,14 @@ public class XmlHandler extends DefaultHandler {
 
         if ("way".equals(qName)) {
             Way way = (Way) lastElem;
-            /*if (route) {
-                log.warn("save route!!!");
-                routeDAO.save(Route.cloneFromWay(way));
-                log.warn("!!!");
-                route = false;
-            }*/
             synchronized (listWay) {
                 listWay.add(way);
+            }
+        }
+
+        if ("relation".equals(qName)) {
+            synchronized (listRelation) {
+                listRelation.add((Relation) lastElem);
             }
         }
 
@@ -122,6 +123,20 @@ public class XmlHandler extends DefaultHandler {
             long id = Long.parseLong(attributes.getValue("id"));
             lastElem = new Way(id);
         }
+
+        if ("member".equals(qName)) {
+            String role = attributes.getValue("role");
+            String ref = attributes.getValue("ref");
+            if (role != null && ref != null) {
+                ((Relation) lastElem).addMember(role, Long.parseLong(ref));
+            }
+        }
+
+        if ("relation".equals(qName)) {
+            long id = Long.parseLong(attributes.getValue("id"));
+            lastElem = new Relation(id);
+        }
+
     }
 
     public List<Node> getListNode() {
@@ -158,6 +173,13 @@ public class XmlHandler extends DefaultHandler {
                     if (listTips.size() > 0) {
                         tipDAO.save(listTips);
                         listTips.clear();
+                    }
+                }
+
+                synchronized (listRelation) {
+                    if (listRelation.size() > 0) {
+                        relationDAO.save(listRelation);
+                        listRelation.clear();
                     }
                 }
             } catch (Exception ex) {

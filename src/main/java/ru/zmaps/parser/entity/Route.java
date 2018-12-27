@@ -14,7 +14,9 @@ public class Route extends Element {
     }
 
     @DBRef(lazy = true)
-    final List<RouteNode> nodes = new ArrayList<>();
+    List<RouteNode> nodes = new ArrayList<>();
+
+    List<Restriction> restrictions = new ArrayList<>();
 
     public void addNode(RouteNode node) {
         nodes.add(node);
@@ -24,7 +26,7 @@ public class Route extends Element {
         Route route = new Route(way.getId());
 
         for (Node node : way.getNodes()) {
-            route.addNode(new RouteNode(node.getPoint(),node.getId()));
+            route.addNode(new RouteNode(node.getPoint(), node.getId()));
         }
 
         route.setTags(way.getTags());

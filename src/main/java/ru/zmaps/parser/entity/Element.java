@@ -23,7 +23,6 @@ public class Element {
         return id;
     }
 
-
     public void addTag(String key, String val) {
         tags.put(key, val);
     }

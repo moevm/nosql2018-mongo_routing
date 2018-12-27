@@ -1,6 +1,5 @@
 package ru.zmaps.parser;
 
-import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,12 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import ru.zmaps.db.RelationDAO;
 import ru.zmaps.db.RouteDAO;
 import ru.zmaps.db.RouteNodeDAO;
 import ru.zmaps.db.WayDAO;
-import ru.zmaps.parser.entity.Route;
-import ru.zmaps.parser.entity.RouteNode;
-import ru.zmaps.parser.entity.Way;
+import ru.zmaps.parser.entity.*;
 import ru.zmaps.start.Application;
 
 import java.io.FileInputStream;
@@ -37,24 +35,20 @@ public class TestParser {
     @Autowired
     RouteNodeDAO routeNodeDAO;
 
+    @Autowired
+    RelationDAO relationDAO;
+
 
     @Test
     public void parsing() throws Exception {
-        step1();//Add in db all objects
-
-
+        FileInputStream in = new FileInputStream("C:\\Users\\Shabashoff\\IdeaProjects\\nosql-mongo\\src\\test\\resources\\len.osm");
+        reader.read(in);
     }
 
     @Test
     public void parsingWays() throws Exception {
         FileInputStream in = new FileInputStream("C:\\Users\\Shabashoff\\IdeaProjects\\nosql-mongo\\src\\test\\resources\\len.osm");
 
-        reader.read(in);
-    }
-
-    @SneakyThrows
-    private void step1() {
-        FileInputStream in = new FileInputStream("C:\\Users\\niksh\\Desktop\\mng\\len.osm");
         reader.read(in);
     }
 
@@ -148,16 +142,47 @@ public class TestParser {
 
     @Test
     public void step3() {
+        int limit = 50_000;
+        int skip = 0;
+        List<Relation> relations = relationDAO.getByCriteria(Criteria.where("tags.type").is("restriction"), limit, skip);
+        HashMap<Long, List<Restriction>> rts = new HashMap<>();
+        while (relations.size() > 0) {
+            skip += limit;
+            for (Relation relation : relations) {
+                Restriction restr = Restriction.convertRelation(relation);
+                if (restr == null) {
+                    log.error("Restriction have error!!! Relation:" + relation);
+                    continue;
+                }
 
-        List<Route> way = routeDAO.get();
-
-        for (Route route : way) {
-            for (RouteNode node : route.getNodes()) {
-                node.addRoute(route);
-                routeNodeDAO.save(node);
+                if (!rts.containsKey(restr.getFrom())) {
+                    ArrayList<Restriction> rs = new ArrayList<>();
+                    rs.add(restr);
+                    rts.put(restr.getFrom(), rs);
+                }
+                else {
+                    rts.get(restr.getFrom()).add(restr);
+                }
             }
-        }
 
+            rts.forEach((k, v) -> {
+                Route route = routeDAO.getById(k);
+
+                if (route == null) return;
+
+                if (route.getRestrictions() == null) {
+                    route.setRestrictions(v);
+                }
+                else {
+                    route.getRestrictions().addAll(v);
+                }
+
+                routeDAO.save(route);
+            });
+
+            rts.clear();
+            relations = relationDAO.getByCriteria(Criteria.where("tags.type").is("restriction"), limit, skip);
+        }
     }
 
     @Test

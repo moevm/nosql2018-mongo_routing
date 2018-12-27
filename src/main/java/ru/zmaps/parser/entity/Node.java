@@ -1,11 +1,14 @@
 package ru.zmaps.parser.entity;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.geo.Point;
 
 @Data
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Node extends Element {
-    private Point point;
+    Point point;
 
     public Node() {
         super(-1L);
