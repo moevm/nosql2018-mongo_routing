@@ -109,6 +109,7 @@ L.control.layers(null, mixed).addTo(map);
 
 $('#filter-address').on('input', function (e) {
     console.log(e);
+    document.getElementById("test").style.display ="block";
     $.ajax({
         url: "./api/tips/get?str=" + $('#filter-address').val(),
         success: function (data) {
@@ -157,17 +158,19 @@ ul.onclick = function (event) {
             let p = jQuery.parseJSON(data);
             console.log(data);
             if (p.tags.name === undefined) name = "";
-                else name = p.tags.name;
+            else name = p.tags.name;
 
             if (p.tags["addr:region"] === undefined) region = "";
-                            else region = p.tags["addr:region"]+ ", ";
+            else region = p.tags["addr:region"] + ", ";
 
             if (p.tags["addr:country"] === undefined) country = "";
-                            else country = p.tags["addr:country"]+ ", ";
+            else country = p.tags["addr:country"] + ", ";
 
+            document.getElementById("filter-address").value = name;
+            document.getElementById("test").style.display="none";
             var popup = L.popup()
                 .setLatLng([p.nodes[0].point.x, p.nodes[0].point.y])
-                .setContent("" + p.nodes[0].point.x + " " + p.nodes[0].point.y + "<br>" + country  + region + name + "<br>" + "<input type=\"button\" value=\"Отсюда\" class = \"from_to\" onClick=\"clickFrom(" + p.nodes[0].point.x + ", " + p.nodes[0].point.y + ", '" + p.tags.name + "', " + p.id + ");\"> <input type=\"button\" value=\"Сюда\" class = \"from_to\" onClick=\"clickTo(" + p.nodes[0].point.x + ", " + p.nodes[0].point.y + ", '" + p.tags.name + "', " + p.id + ")\">")
+                .setContent("" + p.nodes[0].point.x + " " + p.nodes[0].point.y + "<br>" + country + region + name + "<br>" + "<input type=\"button\" value=\"Отсюда\" class = \"from_to\" onClick=\"clickFrom(" + p.nodes[0].point.x + ", " + p.nodes[0].point.y + ", '" + p.tags.name + "', " + p.id + ");\"> <input type=\"button\" value=\"Сюда\" class = \"from_to\" onClick=\"clickTo(" + p.nodes[0].point.x + ", " + p.nodes[0].point.y + ", '" + p.tags.name + "', " + p.id + ")\">")
                 .openOn(map)
         }
     })
@@ -209,10 +212,5 @@ function clickFrom(x, y, name, id) {
     if (name === null) document.getElementById('from').value = x + " " + y;
     else document.getElementById('from').value = name;
     return false;
-}
-
-function button_import(){
-    alert("hello");
-
 }
 
