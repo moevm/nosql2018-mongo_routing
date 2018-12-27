@@ -211,3 +211,8 @@ function clickFrom(x, y, name, id) {
     return false;
 }
 
+function button_import(){
+    alert("hello");
+
+}
+
