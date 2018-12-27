@@ -47,4 +47,10 @@ public class NodeDAO {
         return mongo.find(query, Node.class).get(0);
     }
 
+    public List<Node> getByLimit(int limit, int skip) {
+        Query query = new Query();
+        query.limit(limit).skip(skip);
+        return mongo.find(query, Node.class);
+    }
+
 }

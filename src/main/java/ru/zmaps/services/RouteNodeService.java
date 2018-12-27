@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import ru.zmaps.db.RouteNodeDAO;
 import ru.zmaps.parser.entity.RouteNode;
 
+import java.util.List;
+
 @Log4j
 @Service
 public class RouteNodeService {
@@ -20,6 +22,16 @@ public class RouteNodeService {
         rn.setRoutes(null);
 
         return rn;
+    }
+
+    public List<RouteNode> export(int limit, int skip) {
+        List<RouteNode> byLimit = routeNodeDAO.getByLimit(limit, skip);
+
+        for (RouteNode route : byLimit) {
+            route.setRoutes(null);
+        }
+
+        return byLimit;
     }
 
 }

@@ -21,4 +21,9 @@ public class RouteNodeController {
     public String getNearest(@RequestParam double x, @RequestParam double y) {
         return gson.toJson(service.getNearest(x, y));
     }
+
+    @GetMapping("/export")
+    public String getNearest(@RequestParam int limit, @RequestParam int skip) {
+        return gson.toJson(service.export(limit, skip));
+    }
 }

@@ -36,4 +36,10 @@ public class TipDAO {
         return getTips(substr, DEFAULT_LIMIT);
     }
 
+    public List<Tip> getByLimit(int limit, int skip) {
+        Query query = new Query();
+        query.limit(limit).skip(skip);
+        return mongo.find(query, Tip.class);
+    }
+
 }

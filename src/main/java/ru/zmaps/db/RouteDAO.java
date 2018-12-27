@@ -26,6 +26,12 @@ public class RouteDAO {
         mongo.insertAll(r);
     }
 
+    public List<Route> getByLimit(int limit, int skip) {
+        Query query = new Query();
+        query.limit(limit).skip(skip);
+        return mongo.find(query, Route.class);
+    }
+
     public Route getById(Long id) {
         Query query = new Query();
         query.addCriteria(Criteria.where("id").is(id)).limit(1);

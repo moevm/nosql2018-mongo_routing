@@ -24,4 +24,9 @@ public class TipsController {
         log.info("Get tips by: " + str);
         return gson.toJson(dao.getTips(str));
     }
+
+    @GetMapping("/export")
+    public String getNearest(@RequestParam int limit, @RequestParam int skip) {
+        return gson.toJson(dao.getByLimit(limit, skip));
+    }
 }

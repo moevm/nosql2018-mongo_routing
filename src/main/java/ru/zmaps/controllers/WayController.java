@@ -22,4 +22,9 @@ public class WayController {
         return gson.toJson(service.getById(id));
     }
 
+
+    @GetMapping("/export")
+    public String getNearest(@RequestParam int limit, @RequestParam int skip) {
+        return gson.toJson(service.export(limit, skip));
+    }
 }

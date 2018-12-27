@@ -59,4 +59,9 @@ public class WayDAO {
         return mongo.find(query, Way.class).get(0);
     }
 
+    public List<Way> getByLimit(int limit, int skip) {
+        Query query = new Query();
+        query.limit(limit).skip(skip);
+        return mongo.find(query, Way.class);
+    }
 }

@@ -26,6 +26,11 @@ public class RouteNodeDAO {
         mongo.indexOps(RouteNode.class).ensureIndex(new GeospatialIndex("point"));
     }
 
+    public List<RouteNode> getByLimit(int limit, int skip) {
+        Query query = new Query();
+        query.limit(limit).skip(skip);
+        return mongo.find(query, RouteNode.class);
+    }
 
     public RouteNode getById(Long id) {
         Query query = new Query();

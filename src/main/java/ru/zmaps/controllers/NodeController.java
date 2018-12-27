@@ -24,6 +24,12 @@ public class NodeController {
         return gson.toJson(dao.getNearest(new Point(x, y)));
     }
 
+
+    @GetMapping("/export")
+    public String getNearest(@RequestParam int limit, @RequestParam int skip) {
+        return gson.toJson(dao.getByLimit(limit, skip));
+    }
+
     @GetMapping("/get")
     public String getById(@RequestParam long id) {
         return gson.toJson(dao.getNodeById(id));
