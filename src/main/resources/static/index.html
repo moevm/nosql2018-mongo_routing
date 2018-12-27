@@ -22,12 +22,12 @@
 
     </form>
     <div id="div1" class="">
-        <input class="route">
-        <input class="route">
-        <button class="from_to">Построить маршрут</button>
-        <button class="from_to"
-                onClick="document.getElementById('div1').style.display='none';document.getElementById('filter-sidebar').style.display='block';return false;">Отмена
-        </button>
+        <label style="margin-right: 10px; margin-left: 10px;">Отсюда</label>
+        <input routeIdFrom = "" id = "from" class="route" style="margin-bottom: 10px; width: 190px;" disabled> <br>
+        <label style="margin-left: 10px;margin-right: 25px;"> Сюда </label>
+        <input routeIdTo = "" id = "to" class="route" style="margin-bottom: 10px; width: 190px; " disabled> <br>
+        <button class="from_to" onClick="clickGo()">Построить маршрут</button>
+        <button class="from_to" onClick="clickCancel()">Отмена</button>
     </div>
 
 
